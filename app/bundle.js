@@ -43416,7 +43416,7 @@ var UserService = function () {
         value: function findAll(params) {
             return new Promise(function (resolve, reject) {
                 eb.send(ServerEvents.FIND_ALL_USERS, params, null, function (err, msg) {
-                    if (!!err || !!msg.failureCode || !!(msg.headers || {}).responseCode) {
+                    if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                         reject(err || msg);
 
                         console.log("Error " + Events.USER_CREATED, err || msg);
@@ -43432,7 +43432,7 @@ var UserService = function () {
         value: function find(id) {
             return new Promise(function (resolve, reject) {
                 eb.send(ServerEvents.FIND_USER, id, null, function (err, msg) {
-                    if (!!err || !!msg.failureCode || !!(msg.headers || {}).responseCode) {
+                    if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                         reject(err || msg);
 
                         console.log("Error " + Events.USER_CREATED, err || msg);
@@ -43448,7 +43448,7 @@ var UserService = function () {
         value: function create(user) {
             return new Promise(function (resolve, reject) {
                 eb.send(ServerEvents.CREATE_USER, user, null, function (err, msg) {
-                    if (!!err || !!msg.failureCode || !!(msg.headers || {}).responseCode) {
+                    if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                         reject(err || msg);
 
                         console.log("Error " + Events.USER_CREATED, err || msg);
@@ -43468,7 +43468,7 @@ var UserService = function () {
         value: function update(user) {
             return new Promise(function (resolve, reject) {
                 eb.send(ServerEvents.UPDATE_USER, user, null, function (err, msg) {
-                    if (!!err || !!msg.failureCode || !!(msg.headers || {}).responseCode) {
+                    if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                         reject(err || msg);
 
                         console.log("Error " + Events.USER_CREATED, err || msg);
@@ -43486,7 +43486,7 @@ var UserService = function () {
         value: function _delete(id) {
             return new Promise(function (resolve, reject) {
                 eb.send(ServerEvents.DELETE_USER, id, null, function (err, msg) {
-                    if (!!err || !!msg.failureCode || !!(msg.headers || {}).responseCode) {
+                    if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                         reject(err || msg);
 
                         console.log("Error " + Events.USER_CREATED, err || msg);
