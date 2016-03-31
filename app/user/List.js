@@ -3,6 +3,10 @@ import React from 'react';
 var UserList = require('./UserList');
 var Modal = require('../../../components/Modal');
 var CreateNewUserForm = require('./CreateNewUserForm');
+var userService = require('./UserService');
+
+var ee = require('./EventEmmiter');
+var Events = require('./Events');
 
 class ListUser extends React.Component {
     constructor(props) {
@@ -10,7 +14,14 @@ class ListUser extends React.Component {
         var $this = this;
 
         $this.createNewUser.bind($this);
-        $this.onClose.bind($this);
+        $this.closeUserForm.bind($this);
+        $this.doCreateNewUser.bind($this);
+
+        $this.componentDidMount.bind($this);
+        $this.componentWillUnmount.bind($this);
+        $this.updateUsers.bind($this);
+        this.onUserChange.bind(this);
+        this.onUserSubmit.bind(this);
 
         this.state = {
             createModal: null,
@@ -44,6 +55,31 @@ class ListUser extends React.Component {
                 },
             ]
         };
+    }
+
+    componentDidMount() {
+        var $this = this;
+        $this.updateUsers.call($this);
+        ee.on(Events.USER_CREATED, $this.updateUsers.bind($this));
+        ee.on(Events.USER_UPDATED, $this.updateUsers.bind($this));
+        ee.on(Events.USER_DELETED, $this.updateUsers.bind($this));
+    }
+
+    componentWillUnmount() {
+        var $this = this;
+        ee.removeListener(Events.USER_CREATED, $this.updateUsers.bind($this));
+        ee.removeListener(Events.USER_UPDATED, $this.updateUsers.bind($this));
+        ee.removeListener(Events.USER_DELETED, $this.updateUsers.bind($this));
+    }
+
+    updateUsers(e) {
+        var $this = this;
+        userService.findAll()
+            .then(rsp => {
+                $this.setState({
+                    users: rsp.data
+                });
+            });
     }
 
     render() {
@@ -85,30 +121,51 @@ class ListUser extends React.Component {
         var $this = this;
 
         $this.setState({
+            user: {},
             createModal: function () {
                 return (
                     <Modal title={<h3 className="modal-title text-primary">Create New User</h3>}
-                           body={<CreateNewUserForm user={$this.state.user}/>}
+                           body={<CreateNewUserForm user={$this.state.user}
+                           onSubmit={$this.onUserSubmit.bind($this)}
+                           onChange={$this.onUserChange.bind($this)}/>}
                            footer={
                                <div>
-                                    <span className="btn btn-primary pull-right">Create User</span>
+                                    <span className="btn btn-primary pull-right"
+                                        onClick={() => $this.doCreateNewUser.call($this, $this.state.user)}>Create User</span>
                                     <span className="btn btn-danger pull-right" style={{marginRight: '10px'}}
-                                    onClick={$this.onClose.bind($this)}>Cancel</span>
+                                    onClick={$this.closeUserForm.bind($this)}>Cancel</span>
                                </div>
                            }
-                           onClose={$this.onClose.bind($this)} isOpen={true}/>
+                           onClose={$this.closeUserForm.bind($this)} isOpen={true}/>
                 );
             }
         });
     }
 
-    onClose() {
+    onUserChange(e) {
+        var $this = this;
+        var user = $this.state.user || {};
+        user[e.target.name] = e.target.value;
+        $this.setState({user: user});
+    }
+
+    onUserSubmit(e, user) {
+        e.preventDefault();
+        this.doCreateNewUser(user);
+    }
+
+    doCreateNewUser(user) {
+        userService.create(user);
+        this.closeUserForm();
+    }
+
+    closeUserForm() {
         var $this = this;
 
         $this.setState({
             createModal: function () {
                 return (
-                    <Modal onClose={$this.onClose.bind($this)} isOpen={false}/>
+                    <Modal onClose={$this.closeUserForm.bind($this)} isOpen={false}/>
                 );
             }
         });

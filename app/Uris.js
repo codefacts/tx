@@ -2,6 +2,7 @@
 
 var Uris = {
     BASE_URI: "/",
+    LOGIN_URI: '/login',
     USER: {
         CREATE: '/user/create',
         VIEW: '/user/view/:id',

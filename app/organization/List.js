@@ -4,6 +4,11 @@ var OrganizationList = require('./OrganizationList');
 var Modal = require('../../../components/Modal');
 var CreateNewOrganizationForm = require('./CreateNewOrganizationForm');
 
+var ee = require('./EventEmmiter');
+var Events = require('./Events');
+
+var organizationService = require('./OrganizationService');
+
 class ListOrganization extends React.Component {
     constructor(props) {
         super(props);
@@ -11,6 +16,7 @@ class ListOrganization extends React.Component {
 
         $this.createNewOrganization.bind($this);
         $this.onClose.bind($this);
+        $this.updateOrganizations.bind($this);
 
         this.state = {
             createModal: null,
@@ -38,6 +44,22 @@ class ListOrganization extends React.Component {
                 },
             ]
         };
+    }
+
+    componentDidMount() {
+        var $this = this;
+        $this.updateOrganizations();
+
+        ee.on(Events.ORGANIZATION_CREATED, $this.onOrganizationChange.bind($this));
+        ee.on(Events.ORGANIZATION_UPDATED, $this.onOrganizationChange.bind($this));
+        ee.on(Events.ORGANIZATION_DELETED, $this.onOrganizationChange.bind($this));
+    }
+
+    componentWillUnmount() {
+        var $this = this;
+        ee.removeListener(Events.ORGANIZATION_CREATED, $this.onOrganizationChange.bind($this));
+        ee.removeListener(Events.ORGANIZATION_UPDATED, $this.onOrganizationChange.bind($this));
+        ee.removeListener(Events.ORGANIZATION_DELETED, $this.onOrganizationChange.bind($this));
     }
 
     render() {
@@ -79,13 +101,19 @@ class ListOrganization extends React.Component {
         var $this = this;
 
         $this.setState({
+            organization: {},
             createModal: function () {
                 return (
                     <Modal title={<h3 className="modal-title text-primary">Create New Organization</h3>}
-                           body={<CreateNewOrganizationForm organization={$this.state.organization}/>}
+                           body={
+                               <CreateNewOrganizationForm organization={$this.state.organization}
+                               onChange={$this.onOrganizationFormChange.bind($this)}
+                               onSubmit={$this.doCreateNewOrganization.bind($this)}/>
+                           }
                            footer={
                                <div>
-                                    <span className="btn btn-primary pull-right">Create Organization</span>
+                                    <span className="btn btn-primary pull-right"
+                                        onClick={$this.doCreateNewOrganization.bind($this)}>Create Organization</span>
                                     <span className="btn btn-danger pull-right" style={{marginRight: '10px'}}
                                     onClick={$this.onClose.bind($this)}>Cancel</span>
                                </div>
@@ -106,6 +134,35 @@ class ListOrganization extends React.Component {
                 );
             }
         });
+    }
+
+    doCreateNewOrganization() {
+        var $this = this;
+        organizationService.create($this.state.organization)
+            .then(id => $this.onClose());
+    }
+
+    onOrganizationFormChange(e) {
+        var $this = this;
+        var org = $this.state.organization || {};
+        org[e.target.name] = e.target.value;
+        $this.setState({organization: org});
+    }
+
+    onOrganizationChange() {
+        var $this = this;
+        $this.updateOrganizations();
+    }
+
+    updateOrganizations(params) {
+        var $this = this;
+        organizationService.findAll(params)
+            .then(rsp => {
+                $this.setState({
+                    organizations: rsp.data
+                });
+            })
+        ;
     }
 }
 

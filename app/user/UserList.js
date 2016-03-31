@@ -2,11 +2,13 @@
 import React from 'react';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 var AuthoritiesListViewEmbed = require('./AuthoritiesListViewEmbed');
+var userService = require('./UserService');
 
 class UserList extends React.Component {
     constructor(props) {
         super(props);
         this.formatAction.bind(this);
+        this.doDeleteUser.bind(this);
     }
 
     render() {
@@ -16,7 +18,7 @@ class UserList extends React.Component {
         var cellEditProp = {
             mode: "dbclick",
             blurToSave: true,
-            afterSaveCell: $this.saveCell
+            afterSaveCell: $this.doUpdateUser
         }
 
         return (
@@ -36,21 +38,27 @@ class UserList extends React.Component {
                 <TableHeaderColumn dataField="remarks">Remarks</TableHeaderColumn>
 
                 <TableHeaderColumn dataField="remarks" editable={false}
-                                   dataFormat={$this.formatAction}>Action</TableHeaderColumn>
+                                   dataFormat={$this.formatAction.bind($this)}>Action</TableHeaderColumn>
 
             </BootstrapTable>
         );
     }
 
-    saveCell(row, name, value) {
+    doUpdateUser(user, name, value) {
+        userService.update(user);
+    }
 
+    doDeleteUser(user) {
+        userService.delete(user.id);
     }
 
     formatAction(action, user) {
         var $this = this;
         return (
             <div>
-                <span className="btn btn-danger">
+                <span className="btn btn-danger" onClick={function (e) {
+                    $this.doDeleteUser(user);
+                }}>
                     <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </span>
             </div>

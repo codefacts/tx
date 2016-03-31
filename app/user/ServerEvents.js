@@ -1,7 +1,7 @@
 "use strict";
 
-var EVENTS;
-module.exports = EVENTS = {
+var ServerEvents;
+module.exports = ServerEvents = {
     "FIND_ALL_USERS": "UM.FIND_ALL_USERS",
     "FIND_USER": "UM.FIND_USER",
 

@@ -2,11 +2,13 @@
 import React from 'react';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 var YesNo = require('./YesNo');
+var organizationService = require('./OrganizationService');
 
 class OrganizationList extends React.Component {
     constructor(props) {
         super(props);
         this.formatAction.bind(this);
+        this.doDeleteOrganization.bind(this);
     }
 
     render() {
@@ -35,14 +37,14 @@ class OrganizationList extends React.Component {
                 <TableHeaderColumn dataField="remarks">Remarks</TableHeaderColumn>
 
                 <TableHeaderColumn dataField="action" editable={false}
-                                   dataFormat={$this.formatAction}>Action</TableHeaderColumn>
+                                   dataFormat={$this.formatAction.bind($this)}>Action</TableHeaderColumn>
 
             </BootstrapTable>
         );
     }
 
-    saveCell(row, name, value) {
-
+    saveCell(organization, name, value) {
+        organizationService.update(organization);
     }
 
     formatActive(active) {
@@ -53,11 +55,17 @@ class OrganizationList extends React.Component {
         var $this = this;
         return (
             <div>
-                <span className="btn btn-danger">
+                <span className="btn btn-danger"
+                      onClick={() => $this.doDeleteOrganization.call($this, organization.id)}>
                     <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </span>
             </div>
         );
+    }
+
+    doDeleteOrganization(id) {
+        var $this = this;
+        organizationService.delete(id);
     }
 }
 

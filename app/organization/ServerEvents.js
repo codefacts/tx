@@ -1,0 +1,13 @@
+"use strict";
+
+var ServerEvents;
+module.exports = ServerEvents = {
+    "FIND_ALL_ORGANIZATIONS": "FIND_ALL_ORGANIZATIONS",
+    "FIND_ORGANIZATION": "FIND_ORGANIZATION",
+
+    "CREATE_ORGANIZATION": "CREATE_ORGANIZATION",
+    "UPDATE_ORGANIZATION": "UPDATE_ORGANIZATION",
+    "DELETE_ORGANIZATION": "DELETE_ORGANIZATION",
+};
+
+console.log(module.exports);

@@ -1,4 +1,4 @@
-import { Router, Route, hashHistory, IndexRoute } from 'react-router'
+import { Router, Route, hashHistory, IndexRoute, Redirect } from 'react-router'
 
 var App = require('./App');
 var React = require('react');
@@ -9,6 +9,7 @@ var Events = require('./Events');
 var ee = require('./EventEmitter');
 
 var Dashboard = require('./pages/Dashboard');
+var Login = require('./pages/Login');
 
 var UserApp = require('./user');
 var ListUsers = require('./user/List');
@@ -29,7 +30,7 @@ ee.on(Events.EVENT_BUS_CONNECTED, function () {
         <Router history={hashHistory}>
             <Route path={Uris.BASE_URI} component={App}>
 
-                <IndexRoute component={Dashboard}/>
+                <IndexRoute component={ListOrganization}/>
 
                 <Route path={Uris.USER.BASE} component={UserApp}>
                     <IndexRoute component={ListUsers}/>
@@ -44,6 +45,8 @@ ee.on(Events.EVENT_BUS_CONNECTED, function () {
                     <Route path={Uris.ORGANIZATION.VIEW} component={ViewOrganization}/>
                     <Route path={Uris.ORGANIZATION.EDIT} component={EditOrganization}/>
                 </Route>
+
+                <Route path={Uris.LOGIN_URI} component={Login}/>
 
             </Route>
         </Router>, document.getElementById('app'));

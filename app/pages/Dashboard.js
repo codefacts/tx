@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-class App extends React.Component {
+class DashboardPage extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -23,4 +23,4 @@ class App extends React.Component {
     }
 }
 
-module.exports = App;
+module.exports = DashboardPage;

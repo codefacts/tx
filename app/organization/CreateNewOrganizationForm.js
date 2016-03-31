@@ -11,30 +11,39 @@ class CreateNewOrganizationForm extends React.Component {
         var $this = this;
         var organization = $this.props.organization || {};
         return (
-            <form>
-                <div className="form-group">
-                    <label htmlFor="id">ID</label>
-                    <input type="text" className="form-control" id="id" placeholder="ID"/>
-                </div>
+            <form onSubmit={$this.props.onSubmit}>
 
                 <div className="form-group">
                     <label htmlFor="shortName">Short Name</label>
-                    <input type="text" className="form-control" id="shortName" placeholder="Short Name"/>
+                    <input type="text" className="form-control" id="shortName" placeholder="Short Name"
+                           name="shortName" value={organization.shortName} onChange={$this.props.onChange}/>
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="name">Name</label>
-                    <input type="text" className="form-control" id="name" placeholder="Name"/>
+                    <input type="text" className="form-control" id="name" placeholder="Name"
+                           name="name" value={organization.name} onChange={$this.props.onChange}/>
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="remarks">Remarks</label>
-                    <input type="text" className="form-control" id="remarks" placeholder="Remarks"/>
+                    <input type="text" className="form-control" id="remarks" placeholder="Remarks"
+                           name="remarks" value={organization.remarks} onChange={$this.props.onChange}/>
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="active">Active</label>
-                    <input type="text" className="form-control" id="active" placeholder="Active"/>
+                    <select className="form-control"
+                            id="active" name="active" value={organization.active} onChange={$this.props.onChange}>
+                        <option value={''}>Select active status</option>
+                        {
+                            [{value: true, name: 'Yes'}, {value: false, name: 'No'}].map(function (op) {
+                                return (
+                                    <option key={op.value} value={op.value}>{op.name}</option>
+                                );
+                            })
+                        }
+                    </select>
                 </div>
 
             </form>
