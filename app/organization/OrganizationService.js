@@ -7,90 +7,72 @@ var Events = require('./Events');
 
 var Promise = require('bluebird');
 
+var $ = require('jquery');
+var base_uri = 'http://localhost/tx';
+
 class OrganizationService {
 
     findAll(params) {
         console.log(params, params);
 
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.FIND_ALL_ORGANIZATIONS, params, null, function (err, msg) {
-                if (!!err || !!msg.failureCode || !!(msg.headers || {}).responseCode) {
-                    reject(err || msg);
-
-                    console.log("Error " + Events.ORGANIZATION_CREATED, err || msg);
-                    return;
-                }
-
-                resolve(msg.body);
+            $.ajax({
+                url: base_uri + '/FIND_ALL_ORGANIZATIONS',
+                success: function (list) {
+                    resolve({data: list});
+                },
+                error: reject
             });
         });
     }
 
     find(id) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.FIND_ORGANIZATION, id, null, function (err, msg) {
-                if (!!err || !!msg.failureCode || !!(msg.headers || {}).responseCode) {
-                    reject(err || msg);
 
-                    console.log("Error " + Events.ORGANIZATION_CREATED, err || msg);
-                    return;
-                }
-
-                resolve(msg.body);
-            });
         });
     }
 
     create(user) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.CREATE_ORGANIZATION, user, null, function (err, msg) {
-                if (!!err || !!msg.failureCode || !!(msg.headers || {}).responseCode) {
-                    reject(err || msg);
-
-                    console.log("Error " + Events.ORGANIZATION_CREATED, err || msg);
-                    return;
-                }
-
-                resolve(msg.body);
-
-                ee.emit(Events.ORGANIZATION_CREATED, msg.body);
-
-                console.log(Events.ORGANIZATION_CREATED, user);
+            $.ajax({
+                url: base_uri + '/CREATE_ORGANIZATION',
+                method: 'POST',
+                data: user,
+                success: resolve,
+                error: reject
             });
+
+            ee.emit(Events.ORGANIZATION_CREATED, 1);
+
+            console.log(Events.ORGANIZATION_CREATED, user);
         });
     }
 
     update(user) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.UPDATE_ORGANIZATION, user, null, function (err, msg) {
-                if (!!err || !!msg.failureCode || !!(msg.headers || {}).responseCode) {
-                    reject(err || msg);
-
-                    console.log("Error " + Events.ORGANIZATION_CREATED, err || msg);
-                    return;
-                }
-
-                resolve(msg.body);
-
-                ee.emit(Events.ORGANIZATION_UPDATED, msg.body);
+            $.ajax({
+                url: base_uri + '/UPDATE_ORGANIZATION',
+                method: 'POST',
+                data: user,
+                success: resolve,
+                error: reject
             });
+
+            ee.emit(Events.ORGANIZATION_UPDATED, user.id);
         });
     }
 
     delete(id) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.DELETE_ORGANIZATION, id, null, function (err, msg) {
-                if (!!err || !!msg.failureCode || !!(msg.headers || {}).responseCode) {
-                    reject(err || msg);
-
-                    console.log("Error " + Events.ORGANIZATION_CREATED, err || msg);
-                    return;
-                }
-
-                resolve(msg.body);
-
-                ee.emit(Events.ORGANIZATION_DELETED, msg.body);
+            $.ajax({
+                url: base_uri + '/DELETE_ORGANIZATION',
+                method: 'POST',
+                data: {id: id},
+                success: resolve,
+                error: reject
             });
+
+            ee.emit(Events.ORGANIZATION_DELETED, id);
         });
     }
 }

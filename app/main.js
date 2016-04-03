@@ -50,8 +50,7 @@ ee.on(Events.EVENT_BUS_CONNECTED, function () {
 
             </Route>
         </Router>, document.getElementById('app'));
+
 });
 
-//Create the EventBus
-window.eb = require('./EventBus');
 window.Events = Events;
