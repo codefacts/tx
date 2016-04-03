@@ -53,4 +53,5 @@ ee.on(Events.EVENT_BUS_CONNECTED, function () {
 
 });
 
+window.eb = require('./EventBus');
 window.Events = Events;

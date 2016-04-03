@@ -19020,6 +19020,7 @@ module.exports = require('./lib/React');
 'use strict';
 
 var Apis = {
+    //BASE_URI: window.location.protocol + '://' + window.location.hostname + ':' + window.location.port,
     BASE_URI: 'http://localhost:8085',
     FIND_ALL_UNITS: ''
 };
@@ -19140,26 +19141,25 @@ module.exports = auth;
 //Create EventBus
 var Apis = require('./Apis');
 var EventBus = require("vertx3-eventbus-client");
-//var eb = new EventBus(Apis.BASE_URI + '/eventbus');
-var eb = {};
+var eb = new EventBus(Apis.BASE_URI + '/eventbus');
 var ee = require('./EventEmitter');
 var Events = require('./Events');
-//
-//eb.onopen = function onopen() {
-//
-//    console.info("EVENT_BUS OPENED");
-//
-//    ee.emit(Events.EVENT_BUS_CONNECTED, eb);
-//}
-//
-//eb.onclose = function () {
-//
-//    console.info("EVENT_BUS CLOSED");
-//
-//    ee.emit(Events.EVENT_BUS_DISCONNECTED, eb);
-//}
 
-ee.emit(Events.EVENT_BUS_CONNECTED, eb);
+eb.onopen = function onopen() {
+
+    console.info("EVENT_BUS OPENED");
+
+    ee.emit(Events.EVENT_BUS_CONNECTED, eb);
+};
+
+eb.onclose = function () {
+
+    console.info("EVENT_BUS CLOSED");
+
+    ee.emit(Events.EVENT_BUS_DISCONNECTED, eb);
+};
+
+//ee.emit(Events.EVENT_BUS_CONNECTED, eb);
 
 module.exports = eb;
 
@@ -19242,39 +19242,41 @@ var CreateOrganization = require('./organization/Create');
 var EditOrganization = require('./organization/Edit');
 var ViewOrganization = require('./organization/View');
 
-ReactDom.render(React.createElement(
-    _reactRouter.Router,
-    { history: _reactRouter.hashHistory },
-    React.createElement(
-        _reactRouter.Route,
-        { path: Uris.BASE_URI, component: App },
-        React.createElement(_reactRouter.IndexRoute, { component: ListOrganization }),
-        React.createElement(
-            _reactRouter.Route,
-            { path: Uris.USER.BASE, component: UserApp },
-            React.createElement(_reactRouter.IndexRoute, { component: ListUsers }),
-            React.createElement(_reactRouter.Route, { path: Uris.USER.CREATE, component: CreateUser }),
-            React.createElement(_reactRouter.Route, { path: Uris.USER.VIEW, component: ViewUser }),
-            React.createElement(_reactRouter.Route, { path: Uris.USER.EDIT, component: EditUser })
-        ),
-        React.createElement(
-            _reactRouter.Route,
-            { path: Uris.ORGANIZATION.BASE, component: OrganizationApp },
-            React.createElement(_reactRouter.IndexRoute, { component: ListOrganization }),
-            React.createElement(_reactRouter.Route, { path: Uris.ORGANIZATION.CREATE, component: CreateOrganization }),
-            React.createElement(_reactRouter.Route, { path: Uris.ORGANIZATION.VIEW, component: ViewOrganization }),
-            React.createElement(_reactRouter.Route, { path: Uris.ORGANIZATION.EDIT, component: EditOrganization })
-        ),
-        React.createElement(_reactRouter.Route, { path: Uris.LOGIN_URI, component: Login })
-    )
-), document.getElementById('app'));
-
 //Create and initialize app when eventbus initialization complete.
-ee.on(Events.EVENT_BUS_CONNECTED, function () {});
+ee.on(Events.EVENT_BUS_CONNECTED, function () {
 
+    ReactDom.render(React.createElement(
+        _reactRouter.Router,
+        { history: _reactRouter.hashHistory },
+        React.createElement(
+            _reactRouter.Route,
+            { path: Uris.BASE_URI, component: App },
+            React.createElement(_reactRouter.IndexRoute, { component: ListOrganization }),
+            React.createElement(
+                _reactRouter.Route,
+                { path: Uris.USER.BASE, component: UserApp },
+                React.createElement(_reactRouter.IndexRoute, { component: ListUsers }),
+                React.createElement(_reactRouter.Route, { path: Uris.USER.CREATE, component: CreateUser }),
+                React.createElement(_reactRouter.Route, { path: Uris.USER.VIEW, component: ViewUser }),
+                React.createElement(_reactRouter.Route, { path: Uris.USER.EDIT, component: EditUser })
+            ),
+            React.createElement(
+                _reactRouter.Route,
+                { path: Uris.ORGANIZATION.BASE, component: OrganizationApp },
+                React.createElement(_reactRouter.IndexRoute, { component: ListOrganization }),
+                React.createElement(_reactRouter.Route, { path: Uris.ORGANIZATION.CREATE, component: CreateOrganization }),
+                React.createElement(_reactRouter.Route, { path: Uris.ORGANIZATION.VIEW, component: ViewOrganization }),
+                React.createElement(_reactRouter.Route, { path: Uris.ORGANIZATION.EDIT, component: EditOrganization })
+            ),
+            React.createElement(_reactRouter.Route, { path: Uris.LOGIN_URI, component: Login })
+        )
+    ), document.getElementById('app'));
+});
+
+window.eb = require('./EventBus');
 window.Events = Events;
 
-},{"./App":159,"./EventEmitter":162,"./Events":163,"./Uris":164,"./organization":481,"./organization/Create":482,"./organization/Edit":484,"./organization/List":488,"./organization/View":492,"./pages/Dashboard":494,"./pages/Login":495,"./user":497,"./user/Create":499,"./user/Edit":501,"./user/List":505,"./user/View":509,"react":417,"react-dom":202,"react-router":230}],166:[function(require,module,exports){
+},{"./App":159,"./EventBus":161,"./EventEmitter":162,"./Events":163,"./Uris":164,"./organization":481,"./organization/Create":482,"./organization/Edit":484,"./organization/List":488,"./organization/View":492,"./pages/Dashboard":494,"./pages/Login":495,"./user":497,"./user/Create":499,"./user/Edit":501,"./user/List":505,"./user/View":509,"react":417,"react-dom":202,"react-router":230}],166:[function(require,module,exports){
 (function (process,global){
 /* @preserve
  * The MIT License (MIT)
